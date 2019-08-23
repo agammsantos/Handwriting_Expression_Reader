@@ -1,0 +1,86 @@
+<html>
+  <head>
+    <style>
+    .exp{visibility: hidden;}
+    </style>
+    <!-- stylesheet -->
+    <link href="../static/css/literallycanvas.css" rel="stylesheet">
+
+    <!-- dependency: React.js -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-with-addons.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-dom.js"></script>
+
+    <!-- Literally Canvas -->
+    <script src="../static/js/literallycanvas-core.min.js"></script>
+    <script>
+        import { saveAs } from 'file-saver';
+    </script>
+  </head>
+  <body>
+    <!-- where the widget goes. you can do CSS to it. -->
+    <!-- note: as of 0.4.13, you cannot use 'literally' as the class name.
+         sorry about that. -->
+    <center>
+    <div class="my-drawing 1" style='height: 200px; width:200px;'></div>
+    <form action="http://localhost:5000/prediksi" method="post">
+        <p><a href="#" class="button" id="btn-download" onclick="unhide()">Get img and url</a></p>
+        <p>   
+              <a id="dl" download="test.png">
+              <img id="my-img">
+              </a>
+        </p>
+        <div class="exp">
+            <p class="and">Click image to download!</p>
+        </div>
+        <p><input name="url" type="text" id="my-text"></p>
+        <p><input type="submit" value="Solve!"></p>
+    </form>
+  </center>
+    <script>
+        var lc = LC.init(
+          document.getElementsByClassName('my-drawing 1')[0],
+          { imageURLPrefix: '/static/img' }
+        );
+        lc.setImageSize(180, 180);
+        lc.respondToSizeChange();
+
+        var newImage = new Image()
+        newImage.src = '/static/white.png';
+        lc.saveShape(LC.createShape('Image', {image: newImage}));
+        
+        var button = document.getElementById('btn-download');
+        function unhide() {
+          var hid = document.getElementsByClassName("exp");
+          if(hid[0].offsetWidth > 0 && hid[0].offsetHeight > 0) {
+              hid[0].style.visibility = "visible";
+          }
+        };
+        button.addEventListener('click', function (e) {
+          e.preventDefault();
+          document.getElementById("my-text").value = lc.getImage().toDataURL();
+          document.getElementById("my-img").src = lc.getImage().toDataURL();
+          document.getElementById("dl").href = lc.getImage().toDataURL();
+          /*button.href = lc.getImage().toDataURL('image/png');*/
+        });
+        
+        /*document.getElementById('btn-download').onclick = function(e){
+          e.preventDefault();
+          button.href = lc.getImage().toDataURL();
+          window.open(lc.getImage().toDataURL());
+          };*/
+
+    </script>
+    <!-- <form class="controls export">
+            <input type="submit" data-action="export-as-png" value="Export as PNG">
+          </form>     
+    <script>
+            $(document).ready(function() {
+              var lc = LC.init(document.getElementsByClassName('my-drawing')[0]);
+              $('.controls.export [data-action=export-as-png]').click(function(e) {
+                e.preventDefault();
+                window.open(lc.getImage().toDataURL());
+              });
+            });
+    </script> -->
+  </body>
+</html>
